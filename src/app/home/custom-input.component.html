@@ -1,0 +1,30 @@
+<div *ngIf="show" class="form-group">
+  <span *ngIf="question">
+    <label>{{question.label}}</label>
+  <span [ngSwitch]="question.questionOptions.rendering">
+    <span *ngSwitchCase="'text'">
+      <input class="form-control" type="text" [(ngModel)]="value">
+    </span>
+  <span *ngSwitchCase="'date'">
+      <input class="form-control" type="date" [(ngModel)]="value">
+    </span>
+  <span *ngSwitchCase="'multiCheckbox'">
+        <yk-multi-select
+                [items]="tags"
+                [selectedItems]="selectedTags"
+                (onSelectItem)="onSelectTag($event)"
+                (onDeselectItem)="onDeselectTag($event)"
+                (onAddItem)="onAddTag($event)">
+        </yk-multi-select>
+    </span>
+  <span *ngSwitchCase="'select'">
+      <select  class="form-control" type="text" [(ngModel)]="value">
+          <option  *ngFor="let i of question.questionOptions.answers" value={{i.concept}}>{{i.label}}</option>
+      </select>
+    </span>
+  <span *ngSwitchDefault>
+      <input  class="form-control" type="text" [(ngModel)]="value">
+    </span>
+  </span>
+  </span>
+</div>

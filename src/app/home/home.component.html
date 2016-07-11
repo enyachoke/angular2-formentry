@@ -1,0 +1,70 @@
+<div *ngIf="registerForm">
+  <form [formGroup]="registerForm">
+    <tabs>
+      <div *ngFor="let page of formSchema.pages">
+        <tab [tabTitle]="page.label">
+          <div class="panel panel-primary" *ngFor="let section of page.sections">
+            <div class="panel-heading">
+              <h3 class="panel-title">{{ section.label }}</h3>
+            </div>
+            <div class="panel-body">
+              <div *ngFor="let question of section.questions">
+                <div [ngSwitch]="question.type">
+                  <div *ngSwitchCase="'obs'">
+                    <custom-input type="text" [form]="registerForm" [control]="registerForm.controls[question.id]" [question]="question" formControlName="{{question.id}}" ngDefaultControl></custom-input>
+                  </div>
+                  <div *ngSwitchCase="'obsGroup'">
+                    <div [ngSwitch]="question.questionOptions.rendering">
+                      <div *ngSwitchCase="'group'">
+                        <fieldset formGroupName="{{question.id}}">
+                          <div *ngFor="let groupquestion of question.questions">
+                            <custom-input [form]="registerForm" type="text" [control]="registerForm.controls[question.id].controls[groupquestion.id]" [question]="groupquestion" type="text" formControlName="{{groupquestion.id}}" ngDefaultControl></custom-input>
+                          </div>
+                        </fieldset>
+                      </div>
+                      <div *ngSwitchCase="'repeating'">
+                        <h4>{{question.label}}</h4>
+                        <button class='btn btn-primary' (click)="addRepeating(question.id)">Add</button>
+                        <div *ngFor="let ctrl of registerForm.controls[question.id].controls; let i = index" [formGroup]="ctrl">
+                          <div *ngFor="let groupquestion of question.questions">
+                            <span *ngIf="groupquestion">
+                        <custom-input  [form]="registerForm" [control]="ctrl.controls[groupquestion.id]" [question]="groupquestion" type="text" formControlName="{{groupquestion.id}}" ngDefaultControl></custom-input>
+                      </span>
+                          </div>
+                          <button class='btn btn-danger' (click)="removeRepeating(question.id,i)">Remove</button>
+                        </div>
+                      </div>
+                      <div *ngSwitchDefault>
+
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngSwitchCase="'encounterProvider'">
+                    <custom-input type="text" [question]="question" formControlName="{{question.id}}" ngDefaultControl></custom-input>
+                  </div>
+                  <div *ngSwitchCase="'encounterLocation'">
+                    <custom-input type="text" [question]="question" formControlName="{{question.id}}" ngDefaultControl></custom-input>
+                  </div>
+                  <div *ngSwitchCase="'encounterDatetime'">
+                    <custom-input type="text" [question]="question" formControlName="{{question.id}}" ngDefaultControl></custom-input>
+                  </div>
+                  <div *ngSwitchCase="'personAttribute'">
+                    <custom-input type="text" [question]="question" formControlName="{{question.id}}" ngDefaultControl></custom-input>
+                  </div>
+                  <div *ngSwitchDefault>
+                    <label>Can't Handle field</label>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </tab>
+      </div>
+      <button class="btn btn-primary" (click)='submitForms()'>Save</button>
+    </tabs>
+  </form>
+  <pre>
+  {{registerForm.value | json}}
+  </pre>
+</div>
